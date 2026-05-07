@@ -116,8 +116,9 @@ ${pdfText}`,
     conversationHistory.push({ role: 'assistant', content: reply });
     res.json({ reply });
   } catch (err) {
-    console.error('OpenAI API 오류:', err.message);
-    res.status(500).json({ error: '답변을 가져오지 못했습니다. 잠시 후 다시 시도해주세요.' });
+    console.error('API 오류:', err.message);
+    // 디버그용: 에러 상세 내용 임시 노출
+    res.status(500).json({ error: err.message });
   }
 });
 
