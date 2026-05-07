@@ -15,7 +15,7 @@
 | Perspective | Content |
 |-------------|---------|
 | **Problem** | 사용자가 업무 관련 PDF 문서에서 원하는 정보를 직접 찾는 데 시간이 오래 걸린다 |
-| **Solution** | PDF 텍스트를 추출하여 Claude API에 컨텍스트로 전달하고, 사용자 질문에 자연어로 답변한다 |
+| **Solution** | PDF 텍스트를 추출하여 OpenAI API에 컨텍스트로 전달하고, 사용자 질문에 자연어로 답변한다 |
 | **Function/UX Effect** | 사용자가 채팅창에 질문을 입력하면 즉시 PDF 기반의 정확한 답변을 받을 수 있다 |
 | **Core Value** | 업무 문서 검색 시간을 단축하고 정보 접근성을 높인다 |
 
@@ -29,7 +29,7 @@
 |-----|-------|
 | **WHY** | 업무 PDF 문서에서 정보를 빠르게 찾지 못하는 문제를 해결하기 위해 |
 | **WHO** | PDF 업무 문서를 자주 참조하는 실무 담당자 |
-| **RISK** | PDF 텍스트 추출 실패 또는 Claude API 토큰 한도 초과 |
+| **RISK** | PDF 텍스트 추출 실패 또는 OpenAI API 토큰 한도 초과 |
 | **SUCCESS** | 질문 입력 후 3초 이내 답변, PDF 내용 기반 정확한 응답 |
 | **SCOPE** | Phase 1: 서버 구축 + PDF 파싱 + Claude API 연동 + 채팅 UI |
 
@@ -39,7 +39,7 @@
 
 ### 1.1 Purpose
 
-`docs/` 폴더에 저장된 PDF 문서를 서버에서 읽어 텍스트를 추출하고, 사용자가 채팅 UI에서 질문하면 Claude API(`claude-haiku-4-5`)가 해당 내용을 바탕으로 답변을 반환한다.
+`docs/` 폴더에 저장된 PDF 문서를 서버에서 읽어 텍스트를 추출하고, 사용자가 채팅 UI에서 질문하면 OpenAI API(`gpt-4o-mini`)가 해당 내용을 바탕으로 답변을 반환한다.
 
 ### 1.2 Background
 
@@ -79,8 +79,8 @@
 | ID | Requirement | Priority | Status |
 |----|-------------|----------|--------|
 | FR-01 | 서버 시작 시 `docs/` 폴더의 모든 PDF를 읽어 텍스트 추출 | High | Pending |
-| FR-02 | POST `/api/chat` — 질문 수신 후 Claude API 호출, 답변 반환 | High | Pending |
-| FR-03 | 추출한 PDF 텍스트를 Claude 시스템 프롬프트에 포함 | High | Pending |
+| FR-02 | POST `/api/chat` — 질문 수신 후 OpenAI API 호출, 답변 반환 | High | Pending |
+| FR-03 | 추출한 PDF 텍스트를 OpenAI 시스템 프롬프트에 포함 | High | Pending |
 | FR-04 | 채팅 UI: 메시지 입력창, 전송 버튼, 대화 내역 표시 | High | Pending |
 | FR-05 | 세션 중 대화 내역(messages 배열) 서버 메모리에 유지 | Medium | Pending |
 | FR-06 | PDF 없을 때 안내 메시지 반환 | Medium | Pending |
@@ -120,7 +120,7 @@
 | Risk | Impact | Likelihood | Mitigation |
 |------|--------|------------|------------|
 | PDF 텍스트 추출 라이브러리 호환성 문제 | High | Medium | `pdf-parse` 라이브러리 사용, 실패 시 `pdfjs-dist` 대체 |
-| Claude API 토큰 한도 초과 (대용량 PDF) | High | Medium | PDF 텍스트를 최대 길이로 잘라 전달 (예: 8000자) |
+| OpenAI API 토큰 한도 초과 (대용량 PDF) | High | Medium | PDF 텍스트를 최대 길이로 잘라 전달 (예: 8000자) |
 | Vercel 서버리스 환경에서 PDF 파일 접근 불가 | High | Low | `docs/` 폴더를 정적 에셋으로 포함하거나 Base64 인코딩 저장 방식 검토 |
 | API 키 환경 변수 누락으로 배포 실패 | Medium | Low | Vercel 대시보드 환경 변수 설정 체크리스트 작성 |
 
@@ -168,7 +168,7 @@
 |----------|---------|----------|-----------|
 | 서버 프레임워크 | Express / Fastify / Koa | Express | 간단하고 Vercel 호환성 우수 |
 | PDF 파싱 | pdf-parse / pdfjs-dist | pdf-parse | Node.js 환경에서 간단한 API |
-| Claude API | Anthropic SDK / fetch | @anthropic-ai/sdk | 공식 SDK로 안정적 |
+| OpenAI API | openai SDK / fetch | openai | 공식 SDK로 안정적 |
 | 프론트엔드 | React / Vue / Vanilla JS | Vanilla JS | 빌드 도구 없이 바로 배포 가능 |
 | 스타일링 | Tailwind / CSS Modules / 일반 CSS | 일반 CSS | 의존성 최소화 |
 | 배포 | Vercel / Netlify / Railway | Vercel | 서버리스 함수 지원 |
@@ -212,14 +212,14 @@ my-pdf-chatbot/
 
 | Variable | Purpose | Scope | To Be Created |
 |----------|---------|-------|:-------------:|
-| `ANTHROPIC_API_KEY` | Claude API 인증 | Server only | ☑ (이미 .env 존재) |
+| `OPENAI_API_KEY` | OpenAI API 인증 | Server only | ☑ (이미 .env 존재) |
 
 ---
 
 ## 9. Next Steps
 
 1. [ ] Design 문서 작성 (`/pdca design pdf-chatbot`)
-2. [ ] `package.json` 및 의존성 설치 (`express`, `pdf-parse`, `@anthropic-ai/sdk`)
+2. [ ] `package.json` 및 의존성 설치 (`express`, `pdf-parse`, `openai`)
 3. [ ] 구현 시작 (`/pdca do pdf-chatbot`)
 
 ---
