@@ -212,7 +212,7 @@ my-pdf-chatbot/
 
 | Variable | Purpose | Scope | To Be Created |
 |----------|---------|-------|:-------------:|
-| `OPENAI_API_KEY` | OpenAI API 인증 | Server only | ☑ (이미 .env 존재) |
+| `SAMBANOVA_API_KEY` | Sambanova Cloud API 인증 | Server only | ☑ (이미 .env 존재) |
 
 ---
 

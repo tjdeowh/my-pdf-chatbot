@@ -10,7 +10,7 @@
 
 - **서버**: Node.js + Express
 - **프론트엔드**: HTML / CSS / JavaScript
-- **AI API**: OPEN AI API, GPT-4o mini
+- **AI API**: Sambanova Cloud API, Meta-Llama-3.3-70B-Instruct (무료)
 
 ## 프로젝트 구조
 
@@ -36,7 +36,7 @@ my-pdf-chatbot/
 `.env` 파일에 아래 항목이 정의되어 있어야 한다. 값은 직접 확인할 것.
 
 ```
-ANTHROPIC_API_KEY=your_api_key_here
+SAMBANOVA_API_KEY=your_api_key_here
 ```
 
 ## 응답 및 코드 작성 규칙
