@@ -123,18 +123,9 @@ ${pdfText}`,
   }
 });
 
-// PDF 로드 완료 여부를 추적하는 Promise
-const pdfReady = loadPdfDocuments();
-
-// 서버리스 환경(Vercel)에서는 module.exports, 로컬에서는 직접 실행
-if (require.main === module) {
-  // 로컬 실행: PDF 로드 완료 후 서버 시작
-  pdfReady.then(() => {
-    app.listen(PORT, () => {
-      console.log(`서버 실행 중: http://localhost:${PORT}`);
-    });
+// PDF 로드 완료 후 서버 시작 (Railway, 로컬 모두 동일)
+loadPdfDocuments().then(() => {
+  app.listen(PORT, () => {
+    console.log(`서버 실행 중: http://localhost:${PORT}`);
   });
-} else {
-  // Vercel 서버리스: app export (PDF 로드는 pdfReady Promise로 관리)
-  module.exports = app;
-}
+});
