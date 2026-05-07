@@ -69,7 +69,7 @@ async function loadPdfDocuments() {
     }
   }
 
-  // gpt-4o-mini 컨텍스트 한도 고려, 30000자로 제한
+  // Sambanova Llama 컨텍스트 한도 고려, 30000자로 제한
   pdfText = extractedTexts.join('\n\n').slice(0, 30000);
   console.log(`총 ${pdfFileNames.length}개 PDF 로드 완료`);
 }
@@ -77,20 +77,6 @@ async function loadPdfDocuments() {
 // 로드된 PDF 파일 목록 반환 API
 app.get('/api/pdfs', (req, res) => {
   res.json({ files: pdfFileNames });
-});
-
-// 진단용 API — Sambanova 연결 테스트
-app.get('/api/debug', async (req, res) => {
-  try {
-    const response = await openai.chat.completions.create({
-      model: 'Meta-Llama-3.3-70B-Instruct',
-      messages: [{ role: 'user', content: 'hi' }],
-      max_tokens: 10,
-    });
-    res.json({ ok: true, reply: response.choices[0].message.content });
-  } catch (err) {
-    res.json({ ok: false, error: err.message, type: err.constructor.name });
-  }
 });
 
 // 채팅 API
