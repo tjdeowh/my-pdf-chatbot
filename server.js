@@ -68,8 +68,8 @@ async function loadPdfDocuments() {
     }
   }
 
-  // 토큰 한도 초과 방지를 위해 8000자로 제한
-  pdfText = extractedTexts.join('\n\n').slice(0, 8000);
+  // gpt-4o-mini 컨텍스트 한도 고려, 30000자로 제한
+  pdfText = extractedTexts.join('\n\n').slice(0, 30000);
   console.log(`총 ${pdfFileNames.length}개 PDF 로드 완료`);
 }
 
@@ -120,19 +120,18 @@ ${pdfText}`,
   }
 });
 
-// 서버리스 환경(Vercel)에서는 module.exports, 로컬에서는 직접 실행
-const startServer = async () => {
-  await loadPdfDocuments();
-  app.listen(PORT, () => {
-    console.log(`서버 실행 중: http://localhost:${PORT}`);
-  });
-};
+// PDF 로드 완료 여부를 추적하는 Promise
+const pdfReady = loadPdfDocuments();
 
+// 서버리스 환경(Vercel)에서는 module.exports, 로컬에서는 직접 실행
 if (require.main === module) {
-  // 로컬 실행
-  startServer();
+  // 로컬 실행: PDF 로드 완료 후 서버 시작
+  pdfReady.then(() => {
+    app.listen(PORT, () => {
+      console.log(`서버 실행 중: http://localhost:${PORT}`);
+    });
+  });
 } else {
-  // Vercel 서버리스: PDF를 미리 로드 후 앱 export
-  loadPdfDocuments();
+  // Vercel 서버리스: app export (PDF 로드는 pdfReady Promise로 관리)
   module.exports = app;
 }
