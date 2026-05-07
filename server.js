@@ -8,10 +8,9 @@ const OpenAI = require('openai');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Sambanova Cloud 클라이언트 초기화 (OpenAI SDK 호환)
+// OpenAI 클라이언트 초기화
 const openai = new OpenAI({
-  apiKey: process.env.SAMBANOVA_API_KEY,
-  baseURL: 'https://api.sambanova.ai/v1',
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 app.use(express.json());
@@ -97,7 +96,7 @@ app.post('/api/chat', async (req, res) => {
 
   try {
     const response = await openai.chat.completions.create({
-      model: 'Meta-Llama-3.3-70B-Instruct',
+      model: 'gpt-4o-mini',
       messages: [
         {
           role: 'system',
