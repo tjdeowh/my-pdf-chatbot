@@ -10,7 +10,7 @@
 
 - **서버**: Node.js + Express
 - **프론트엔드**: HTML / CSS / JavaScript
-- **AI API**: Claude API (Anthropic) — `claude-haiku-4-5` 모델
+- **AI API**: OPEN AI API, GPT-4o mini
 
 ## 프로젝트 구조
 

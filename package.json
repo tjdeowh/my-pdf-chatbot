@@ -1,0 +1,19 @@
+{
+  "name": "my-pdf-chatbot",
+  "version": "1.0.0",
+  "description": "PDF 기반 업무 어시스턴트 챗봇",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "openai": "^4.47.1",
+    "pdf-parse": "^1.1.1",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
